@@ -2,7 +2,7 @@ import logging
 import time
 
 
-from http_log.sliding_time_window import SlidingTimeWindow
+from http_log.alerts.sliding_time_window import SlidingTimeWindow
 
 log = logging.getLogger(__name__)
 
@@ -24,17 +24,16 @@ class AlertManager:
         self.__firing = value
 
     def run(self):
-        # mutex ?
         now = int(time.time())
         self.__window.expire(now)
 
-        avg = self.__window.avg
-        total = self.__window.total
+        agg = self.__window.agg
+        avg = agg / self.__window.size
 
         if avg > self.__threshold:
             if not self.__firing:
                 self.__logger.info("High traffic generated an alert - hits = %d, triggered at %d",
-                                   total,
+                                   agg,
                                    now)
                 self.__firing = True
         elif self.__firing:

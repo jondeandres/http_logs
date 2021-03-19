@@ -1,29 +1,32 @@
+import typing
+
+
 class SlidingTimeWindow:
-    def __init__(self, size: int) -> None:
+    def __init__(self, size: int, initial_agg: typing.Any = 0) -> None:
         self.__size = size
-        self.__total = 0
-        self.__timestamps = []
+        self.__agg = initial_agg
+        self.__refs = []
         self.__values = []
 
-    def add(self, timestamp: int, value: int) -> None:
-        self.__timestamps.append(timestamp)
+    def add(self, ref: int, value: int) -> None:
+        self.__refs.append(ref)
         self.__values.append(value)
 
-        self.__total += value
-        self.expire(timestamp)
+        self.__agg += value
+        self.expire(ref)
 
-    def expire(self, time_reference: int) -> None:
-        if not self.__timestamps:
+    def expire(self, ref: int) -> None:
+        if not self.__refs:
             return
 
-        while self.__timestamps and self.__timestamps[0] <= time_reference - self.__size:
-            self.__timestamps.pop(0)
-            self.__total -= self.__values.pop(0)
+        while self.__refs and self.__refs[0] <= ref - self.__size:
+            self.__refs.pop(0)
+            self.__agg -= self.__values.pop(0)
 
     @property
-    def total(self):
-        return self.__total
+    def agg(self):
+        return self.__agg
 
     @property
-    def avg(self) -> float:
-        return self.__total / self.__size
+    def size(self):
+        return self.__size
