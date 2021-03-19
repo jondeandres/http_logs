@@ -1,4 +1,4 @@
-class SlidingWindow:
+class SlidingTimeWindow:
     def __init__(self, size: int) -> None:
         self.__size = size
         self.__total = 0

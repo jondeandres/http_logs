@@ -1,9 +1,9 @@
-from http_log.sliding_window import SlidingWindow
+from http_log.sliding_time_window import SlidingTimeWindow
 
 
-class TestSlidingWindow:
+class TestSlidingTimeWindow:
     def test_total(self):
-        window = SlidingWindow(5)
+        window = SlidingTimeWindow(5)
         window.add(1, 1)
         window.add(2, 1)
         window.add(3, 1)
@@ -25,7 +25,7 @@ class TestSlidingWindow:
         assert window.total == 1
 
     def test_get_average(self):
-        window = SlidingWindow(5)
+        window = SlidingTimeWindow(5)
         window.add(1, 10)
         window.add(2, 50)
         window.add(3, 20)

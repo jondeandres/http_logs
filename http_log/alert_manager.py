@@ -2,14 +2,14 @@ import logging
 import time
 
 
-from http_log.sliding_window import SlidingWindow
+from http_log.sliding_time_window import SlidingTimeWindow
 
 log = logging.getLogger(__name__)
 
 
 class AlertManager:
     # threshold is overridable
-    def __init__(self, window: SlidingWindow, threshold: int, logger=log):
+    def __init__(self, window: SlidingTimeWindow, threshold: int, logger=log):
         self.__window = window
         self.__threshold = threshold
         self.__firing = False
