@@ -2,7 +2,7 @@ import logging
 import time
 
 
-from http_log.alerts.sliding_time_window import SlidingTimeWindow
+from http_log.sliding_time_window import SlidingTimeWindow
 
 log = logging.getLogger(__name__)
 

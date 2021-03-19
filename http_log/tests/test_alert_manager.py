@@ -1,7 +1,7 @@
 import mock
 
-from http_log.alerts.alert_manager import AlertManager
-from http_log.alerts.sliding_time_window import SlidingTimeWindow
+from http_log.alert_manager import AlertManager
+from http_log.sliding_time_window import SlidingTimeWindow
 
 
 class TestAlertManager:
