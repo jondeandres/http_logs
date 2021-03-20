@@ -7,6 +7,9 @@ _COMMON_LOG_REGEX = re.compile(r'^(\S+) (\S+) (\S+) \[([\w:/]+\s[+\-]\d{4})\] "(
 
 
 def parse_line(line: str) -> typing.Optional[LogEntry]:
+    if not line:
+        return None
+
     match = _COMMON_LOG_REGEX.match(line)
 
     if not match:

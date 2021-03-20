@@ -14,6 +14,9 @@ class Processor:
         stats = Stats()
 
         for entry in log_entries:
+            if entry is None:
+                continue
+
             stats = Stats(
                 total=1,
                 codes={entry.status_code: 1},
