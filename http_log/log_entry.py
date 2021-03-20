@@ -4,7 +4,7 @@ import re
 
 
 _TIMESTAMP_FORMAT = '%d/%b/%Y:%H:%M:%S %z'
-_SECTION_REGEX = re.compile(r'(^/[^/]+)/([^/]+)')
+_SECTION_REGEX = re.compile(r'(^/[^/]+).*')
 
 
 @dataclass
@@ -25,4 +25,4 @@ class LogEntry:
 
     @property
     def section(self):
-        return _SECTION_REGEX.match(self.path)[1]
+        return _SECTION_REGEX.match(self.path).groups()[0]
