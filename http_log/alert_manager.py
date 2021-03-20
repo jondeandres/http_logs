@@ -27,7 +27,7 @@ class AlertManager:
         now = int(time.time())
         self.__window.expire(now)
 
-        agg = self.__window.agg
+        agg = self.__window.agg.total
         avg = agg / self.__window.size
 
         if avg > self.__threshold:
