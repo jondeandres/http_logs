@@ -7,7 +7,7 @@ from http_log.sliding_time_window import SlidingTimeWindow
 log = logging.getLogger(__name__)
 
 
-class AlertManager:
+class Alert:
     # threshold is overridable
     def __init__(self, window: SlidingTimeWindow, threshold: int, logger=log):
         self.__window = window
@@ -27,7 +27,7 @@ class AlertManager:
         now = int(time.time())
         self.__window.expire(now)
 
-        value = self.__window.value.total
+        value = self.__window.value
         avg = value / self.__window.size
 
         if avg > self.__threshold:

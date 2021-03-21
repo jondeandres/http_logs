@@ -8,7 +8,7 @@ class SlidingTimeWindow:
         self.__refs = []
         self.__values = []
 
-    def add(self, ref: int, value: int) -> None:
+    def add(self, ref: int, value: typing.Any) -> None:
         self.__refs.append(ref)
         self.__values.append(value)
 
@@ -24,9 +24,9 @@ class SlidingTimeWindow:
             self.__value -= self.__values.pop(0)
 
     @property
-    def value(self):
+    def value(self) -> typing.Any:
         return self.__value
 
     @property
-    def size(self):
+    def size(self) -> int:
         return self.__size
