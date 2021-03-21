@@ -65,9 +65,6 @@ async def process(queue, alert_window, stats_window):
     while True:
         entry = await queue.get()
 
-        if not entry:
-            continue
-
         alert_window.add(entry.timestamp, 1)
         stats_window.add(
             entry.timestamp,
