@@ -1,3 +1,4 @@
+import argparse
 import asyncio
 import aiofiles
 import logging
@@ -13,41 +14,39 @@ from http_log.stats import Stats
 log = logging.getLogger(__name__)
 
 
+_DEFAULT_THRESHOLD = 10
+_DEFAULT_LOG_FILE_PATH = '/tmp/access.log'
+_ALERT_WINDOW_SIZE = 120
+_STATS_WINDOW_SIZE = 10
+
+
 def bootstrap():
-    asyncio.run(main())
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--threshold', default=_DEFAULT_THRESHOLD, type=int)
+    parser.add_argument('--log-file-path', default=_DEFAULT_LOG_FILE_PATH)
+
+    args = parser.parse_args()
+
+    asyncio.run(main(args))
 
 
-async def main():
-    logging.basicConfig(level='DEBUG')
+async def main(args: argparse.Namespace):
+    logging.basicConfig(level='INFO')
 
-    alert_window = SlidingTimeWindow(120, 0)
-    stats_window = SlidingTimeWindow(10, Stats())
-    alert = Alert(alert_window, 5)
+    alert_window = SlidingTimeWindow(_ALERT_WINDOW_SIZE, 0)
+    stats_window = SlidingTimeWindow(_STATS_WINDOW_SIZE, Stats())
+    alert = Alert(alert_window, args.threshold)
     queue = asyncio.Queue()
 
     await asyncio.gather(
-        read(queue),
+        read(queue, args.log_file_path),
         alerts(alert),
         stats(stats_window),
         process(queue, alert_window, stats_window)
     )
 
-
-async def alerts(alert):
-    while True:
-        await asyncio.sleep(1)
-        alert.run()
-
-
-async def stats(window):
-    while True:
-        await asyncio.sleep(10)
-        window.expire(time.time())
-        print(sorted(window.value.codes.items(), key=lambda x: -x[1]))
-
-
-async def read(queue):
-    async with aiofiles.open('/home/jon/foo.log', 'r') as f:
+async def read(queue, log_file_path):
+    async with aiofiles.open(log_file_path, 'r') as f:
         await f.seek(0, 2)
 
         while True:
@@ -80,3 +79,16 @@ async def process(queue, alert_window, stats_window):
         )
 
         queue.task_done()
+
+
+async def alerts(alert):
+    while True:
+        await asyncio.sleep(1)
+        alert.run()
+
+
+async def stats(window):
+    while True:
+        await asyncio.sleep(10)
+        window.expire(time.time())
+        print(sorted(window.value.codes.items(), key=lambda x: -x[1]))
