@@ -27,13 +27,13 @@ class AlertManager:
         now = int(time.time())
         self.__window.expire(now)
 
-        agg = self.__window.agg.total
-        avg = agg / self.__window.size
+        value = self.__window.value.total
+        avg = value / self.__window.size
 
         if avg > self.__threshold:
             if not self.__firing:
                 self.__logger.info("High traffic generated an alert - hits = %d, triggered at %d",
-                                   agg,
+                                   value,
                                    now)
                 self.__firing = True
         elif self.__firing:

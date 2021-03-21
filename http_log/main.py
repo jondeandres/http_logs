@@ -21,7 +21,7 @@ def bootstrap():
 async def main():
     logging.basicConfig(level='DEBUG')
 
-    alert_window = SlidingTimeWindow(120, Stats())
+    alert_window = SlidingTimeWindow(120, 0)
     stats_window = SlidingTimeWindow(10, Stats())
     alert_manager = AlertManager(alert_window, 5)
     processor = Processor([alert_window, stats_window])
@@ -43,7 +43,7 @@ async def stats(window):
     while True:
         await asyncio.sleep(10)
         window.expire(time.time())
-        print(sorted(window.agg.codes.items(), key=lambda x: -x[1]))
+        print(sorted(window.value.codes.items(), key=lambda x: -x[1]))
 
 
 async def read(processor):
