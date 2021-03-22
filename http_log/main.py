@@ -28,8 +28,7 @@ def bootstrap() -> None:
 async def main(args: argparse.Namespace) -> None:
     logging.basicConfig(level='INFO')
 
-    task = pipeline.build_pipeline_task(args.log_file_path, args.threshold)
-
+    task = pipeline.build_task(args.log_file_path, args.threshold)
     handler = signal_handler_factory(task)
 
     signal.signal(signal.SIGINT, handler)

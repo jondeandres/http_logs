@@ -1,21 +1,18 @@
 import aiofiles
 import asyncio
 import time
-import typing
-import collections.abc
 
 from http_log import parsing
 from http_log.alert import Alert
 from http_log.sliding_time_window import SlidingTimeWindow
 from http_log.stats import Stats
-from http_log.log_entry import LogEntry
 
 
 _ALERT_WINDOW_SIZE = 120
 _STATS_WINDOW_SIZE = 10
 
 
-def build_pipeline_task(log_file_path: str, alert_threshold: int):
+def build_task(log_file_path: str, alert_threshold: int):
     alert_window = SlidingTimeWindow[int](_ALERT_WINDOW_SIZE, 0)
     stats_window = SlidingTimeWindow[Stats](_STATS_WINDOW_SIZE, Stats())
     alert = Alert(alert_window, alert_threshold)
