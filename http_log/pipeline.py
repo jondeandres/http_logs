@@ -15,11 +15,11 @@ _ALERT_WINDOW_SIZE = 120
 _STATS_WINDOW_SIZE = 10
 
 
-def build_pipeline_task(log_file_path: str, alert_threshold: int) -> collections.abc.Awaitable[typing.Any]:
+def build_pipeline_task(log_file_path: str, alert_threshold: int):
     alert_window = SlidingTimeWindow(_ALERT_WINDOW_SIZE, 0)
     stats_window = SlidingTimeWindow(_STATS_WINDOW_SIZE, Stats())
     alert = Alert(alert_window, alert_threshold)
-    queue: asyncio.Queue[LogEntry] = asyncio.Queue()
+    queue = asyncio.Queue()
 
     return asyncio.gather(
         _read(queue, log_file_path),
@@ -29,7 +29,7 @@ def build_pipeline_task(log_file_path: str, alert_threshold: int) -> collections
     )
 
 
-async def _read(queue: asyncio.Queue[LogEntry], log_file_path: str) -> None:
+async def _read(queue, log_file_path: str) -> None:
     async with aiofiles.open(log_file_path, 'r') as f: # type: ignore
         await f.seek(0, 2)
 
@@ -50,7 +50,7 @@ async def _read(queue: asyncio.Queue[LogEntry], log_file_path: str) -> None:
                 await queue.put(entry)
 
 
-async def _process(queue: asyncio.Queue[LogEntry], alert_window: SlidingTimeWindow, stats_window: SlidingTimeWindow) -> None:
+async def _process(queue, alert_window: SlidingTimeWindow, stats_window: SlidingTimeWindow) -> None:
     while True:
         entry = await queue.get()
 
