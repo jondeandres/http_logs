@@ -50,5 +50,5 @@ class Alert:
     def __format_timestamp(timestamp):
         return datetime.fromtimestamp(
             timestamp,
-            pytz.timezone(_TIMEZONE)).strftime(_DATETIME_FORMAT
-        )
+            pytz.timezone(_TIMEZONE)
+        ).strftime(_DATETIME_FORMAT)
