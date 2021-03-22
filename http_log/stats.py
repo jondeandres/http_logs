@@ -40,3 +40,30 @@ class Stats:
             stats.sections[section] -= hits
 
         return stats
+
+
+def render(stats: Stats):
+    top_sections = sorted(
+            stats.sections.items(),
+            key=lambda x: -x[1]
+    )[:5]
+
+    top_codes = sorted(
+            stats.codes.items(),
+            key=lambda x: -x[1]
+    )[:5]
+
+    msg = f'Total requests: {stats.total}\n'
+    msg += '\nTop sections:\n'
+
+    for section in top_sections:
+        msg += f'{section[0]}: {section[1]} requests\n'
+
+    msg += '\nTop status codes:\n'
+
+    for code in top_codes:
+        msg += f'{code[0]}: {code[1]} requests\n'
+
+    msg += '\n'
+
+    print(msg)

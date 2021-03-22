@@ -5,7 +5,7 @@ import time
 from http_log import parsing
 from http_log.alert import Alert
 from http_log.sliding_time_window import SlidingTimeWindow
-from http_log.stats import Stats
+from http_log import stats
 
 
 _ALERT_WINDOW_SIZE = 120
@@ -14,7 +14,7 @@ _STATS_WINDOW_SIZE = 10
 
 def build_task(log_file_path: str, alert_threshold: int):
     alert_window = SlidingTimeWindow[int](_ALERT_WINDOW_SIZE, 0)
-    stats_window = SlidingTimeWindow[Stats](_STATS_WINDOW_SIZE, Stats())
+    stats_window = SlidingTimeWindow[stats.Stats](_STATS_WINDOW_SIZE, stats.Stats())
     alert = Alert(alert_window, alert_threshold)
     queue = asyncio.Queue()
 
@@ -54,7 +54,7 @@ async def _process(queue, alert_window: SlidingTimeWindow, stats_window: Sliding
         alert_window.add(entry.timestamp, 1)
         stats_window.add(
             entry.timestamp,
-            Stats(
+            stats.Stats(
                 total=1,
                 codes={entry.status_code: 1},
                 sections={entry.section: 1}
@@ -76,27 +76,4 @@ async def _stats(window: SlidingTimeWindow) -> None:
 
         window.expire(int(time.time()))
 
-        top_sections = sorted(
-                window.value.sections.items(),
-                key=lambda x: -x[1]
-        )[:5]
-
-        top_codes = sorted(
-                window.value.codes.items(),
-                key=lambda x: -x[1]
-        )[:5]
-
-        msg = f'Total requests: {window.value.total}\n'
-        msg += '\nTop sections:\n'
-
-        for section in top_sections:
-            msg += f'{section[0]}: {section[1]} requests\n'
-
-        msg += '\nTop status codes:\n'
-
-        for code in top_codes:
-            msg += f'{code[0]}: {code[1]} requests\n'
-
-        msg += '\n'
-
-        print(msg)
+        stats.render(window.value)
