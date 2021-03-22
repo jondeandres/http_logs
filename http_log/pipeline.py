@@ -72,6 +72,31 @@ async def _alerts(alert: Alert) -> None:
 
 async def _stats(window: SlidingTimeWindow) -> None:
     while True:
-        await asyncio.sleep(10)
+        await asyncio.sleep(5)
+
         window.expire(int(time.time()))
-        print(sorted(window.value.codes.items(), key=lambda x: -x[1]))
+
+        top_sections = sorted(
+                window.value.sections.items(),
+                key=lambda x: -x[1]
+        )[:5]
+
+        top_codes = sorted(
+                window.value.codes.items(),
+                key=lambda x: -x[1]
+        )[:5]
+
+        msg = f'Total requests: {window.value.total}\n'
+        msg += '\nTop sections:\n'
+
+        for section in top_sections:
+            msg += f'{section[0]}: {section[1]} requests\n'
+
+        msg += '\nTop status codes:\n'
+
+        for code in top_codes:
+            msg += f'{code[0]}: {code[1]} requests\n'
+
+        msg += '\n'
+
+        print(msg)
