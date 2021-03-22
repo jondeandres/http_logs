@@ -39,16 +39,16 @@ class TestAlert:
         window.size = 2
         logger = mock.Mock()
         threshold = 10
-        time.return_value = 123
+        time.return_value = 1616444723
 
         manager = Alert(window, threshold, logger)
         manager.run()
 
         assert manager.firing is True
 
-        logger.info.assert_called_once_with("High traffic generated an alert - hits = %d, triggered at %d",
+        logger.info.assert_called_once_with("High traffic generated an alert - hits = %d, triggered at %s",
                                             30,
-                                            123)
+                                            '22/Mar/2021:21:25:23 +0100')
 
     @mock.patch('time.time')
     def test_run_when_firing_and_below_threshold(self, time):
@@ -57,7 +57,7 @@ class TestAlert:
         window.size = 2
         logger = mock.Mock()
         threshold = 10
-        time.return_value = 123
+        time.return_value = 1616444723
 
         manager = Alert(window, threshold, logger)
         manager.firing = True
@@ -65,7 +65,7 @@ class TestAlert:
 
         assert manager.firing is False
 
-        logger.info.assert_called_once_with("High traffic alert is now inactive at %d", 123)
+        logger.info.assert_called_once_with("High traffic alert is now inactive at %s", '22/Mar/2021:21:25:23 +0100')
 
     def test_run_when_firing_and_over_threshold(self):
         window = mock.Mock(spec=SlidingTimeWindow)

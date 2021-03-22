@@ -4,7 +4,7 @@ import re
 import typing
 
 
-_TIMESTAMP_FORMAT = '%d/%b/%Y:%H:%M:%S %z'
+_DATETIME_FORMAT = '%d/%b/%Y:%H:%M:%S %z'
 _SECTION_REGEX = re.compile(r'(^/[^/]+).*')
 
 
@@ -22,7 +22,7 @@ class LogEntry:
 
     @property
     def timestamp(self) -> int:
-        return int(datetime.strptime(self.datetime, _TIMESTAMP_FORMAT).timestamp())
+        return int(datetime.strptime(self.datetime, _DATETIME_FORMAT).timestamp())
 
     @property
     def section(self) -> str:

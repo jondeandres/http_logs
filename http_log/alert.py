@@ -1,8 +1,13 @@
+from datetime import datetime
 import logging
+import pytz
 import time
 
 
 from http_log.sliding_time_window import SlidingTimeWindow
+
+_DATETIME_FORMAT = '%d/%b/%Y:%H:%M:%S %z'
+_TIMEZONE = 'Europe/Paris'
 
 log = logging.getLogger(__name__)
 
@@ -32,11 +37,18 @@ class Alert:
 
         if avg > self.__threshold:
             if not self.__firing:
-                self.__logger.info("High traffic generated an alert - hits = %d, triggered at %d",
+                self.__logger.info("High traffic generated an alert - hits = %d, triggered at %s",
                                    value,
-                                   now)
+                                   self.__format_timestamp(now))
                 self.__firing = True
         elif self.__firing:
             self.__firing = False
 
-            self.__logger.info("High traffic alert is now inactive at %d", now)
+            self.__logger.info("High traffic alert is now inactive at %s", self.__format_timestamp(now))
+
+    @staticmethod
+    def __format_timestamp(timestamp):
+        return datetime.fromtimestamp(
+            timestamp,
+            pytz.timezone(_TIMEZONE)).strftime(_DATETIME_FORMAT
+        )
