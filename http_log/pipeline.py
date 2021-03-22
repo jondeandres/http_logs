@@ -8,17 +8,18 @@ from http_log import parsing
 from http_log.alert import Alert
 from http_log.sliding_time_window import SlidingTimeWindow
 from http_log.stats import Stats
+from http_log.log_entry import LogEntry
 
 
 _ALERT_WINDOW_SIZE = 120
 _STATS_WINDOW_SIZE = 10
 
 
-def build_pipeline_task(log_file_path: str, alert_threshold: int) -> collections.abc.Awaitable:
+def build_pipeline_task(log_file_path: str, alert_threshold: int) -> collections.abc.Awaitable[typing.Any]:
     alert_window = SlidingTimeWindow(_ALERT_WINDOW_SIZE, 0)
     stats_window = SlidingTimeWindow(_STATS_WINDOW_SIZE, Stats())
     alert = Alert(alert_window, alert_threshold)
-    queue = asyncio.Queue()
+    queue: asyncio.Queue[LogEntry] = asyncio.Queue()
 
     return asyncio.gather(
         _read(queue, log_file_path),
@@ -28,8 +29,8 @@ def build_pipeline_task(log_file_path: str, alert_threshold: int) -> collections
     )
 
 
-async def _read(queue: asyncio.Queue, log_file_path: str):
-    async with aiofiles.open(log_file_path, 'r') as f:
+async def _read(queue: asyncio.Queue[LogEntry], log_file_path: str) -> None:
+    async with aiofiles.open(log_file_path, 'r') as f: # type: ignore
         await f.seek(0, 2)
 
         while True:
@@ -41,10 +42,15 @@ async def _read(queue: asyncio.Queue, log_file_path: str):
                 continue
 
             for line in lines:
-                await queue.put(parsing.parse_line(line))
+                entry = parsing.parse_line(line)
+
+                if not entry:
+                    continue
+
+                await queue.put(entry)
 
 
-async def _process(queue: asyncio.Queue, alert_window: SlidingTimeWindow, stats_window: SlidingTimeWindow) -> None:
+async def _process(queue: asyncio.Queue[LogEntry], alert_window: SlidingTimeWindow, stats_window: SlidingTimeWindow) -> None:
     while True:
         entry = await queue.get()
 

@@ -11,12 +11,12 @@ class Stats:
     sections: typing.Dict[str, int] = field(default_factory=lambda: collections.defaultdict(int))
     total: int = 0
 
-    def __copy__(self):
+    def __copy__(self) -> 'Stats':
         return Stats(total=self.total,
                      codes=copy(self.codes),
                      sections=copy(self.sections))
 
-    def __add__(self, other) -> 'Stats':
+    def __add__(self, other: 'Stats') -> 'Stats':
         stats = copy(self)
 
         stats.total += other.total
@@ -29,7 +29,7 @@ class Stats:
 
         return stats
 
-    def __sub__(self, other) -> 'Stats':
+    def __sub__(self, other: 'Stats') -> 'Stats':
         stats = copy(self)
         stats.total -= other.total
 

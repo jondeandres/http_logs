@@ -1,12 +1,14 @@
 import typing
 
+from http_log.stats import Stats
+
 
 class SlidingTimeWindow:
     def __init__(self, size: int, initial_value: typing.Any = 0) -> None:
         self.__size = size
         self.__value = initial_value
-        self.__refs = []
-        self.__values = []
+        self.__refs: typing.List[int] = []
+        self.__values: typing.List[Stats] = []
 
     def add(self, ref: int, value: typing.Any) -> None:
         self.__refs.append(ref)
@@ -15,7 +17,7 @@ class SlidingTimeWindow:
         self.__value += value
         self.expire(ref)
 
-    def expire(self, ref: int) -> None:
+    def expire(self, ref: float) -> None:
         if not self.__refs:
             return
 

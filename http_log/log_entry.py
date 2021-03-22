@@ -1,6 +1,7 @@
 from dataclasses import dataclass
 from datetime import datetime
 import re
+import typing
 
 
 _TIMESTAMP_FORMAT = '%d/%b/%Y:%H:%M:%S %z'
@@ -24,5 +25,10 @@ class LogEntry:
         return int(datetime.strptime(self.datetime, _TIMESTAMP_FORMAT).timestamp())
 
     @property
-    def section(self):
-        return _SECTION_REGEX.match(self.path).groups()[0]
+    def section(self) -> str:
+        match = _SECTION_REGEX.match(self.path)
+
+        if not match:
+            return ''
+
+        return match.groups()[0]

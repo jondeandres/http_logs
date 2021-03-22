@@ -9,22 +9,22 @@ log = logging.getLogger(__name__)
 
 class Alert:
     # threshold is overridable
-    def __init__(self, window: SlidingTimeWindow, threshold: int, logger=log):
+    def __init__(self, window: SlidingTimeWindow, threshold: int, logger: logging.Logger =log):
         self.__window = window
         self.__threshold = threshold
         self.__firing = False
         self.__logger = logger
 
     @property
-    def firing(self):
+    def firing(self) -> bool:
         return self.__firing
 
     @firing.setter
-    def firing(self, value):
+    def firing(self, value: bool) -> None:
         self.__firing = value
 
-    def run(self):
-        now = int(time.time())
+    def run(self) -> None:
+        now = time.time()
         self.__window.expire(now)
 
         value = self.__window.value
