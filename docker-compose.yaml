@@ -1,0 +1,10 @@
+version: '3.7'
+
+services:
+  type_check:
+    image: cytopia/mypy
+    entrypoint: mypy --strict /data/
+    stdin_open: true
+    tty: true
+    volumes:
+      - ./:/data
