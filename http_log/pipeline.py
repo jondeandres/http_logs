@@ -16,8 +16,8 @@ _STATS_WINDOW_SIZE = 10
 
 
 def build_pipeline_task(log_file_path: str, alert_threshold: int):
-    alert_window = SlidingTimeWindow(_ALERT_WINDOW_SIZE, 0)
-    stats_window = SlidingTimeWindow(_STATS_WINDOW_SIZE, Stats())
+    alert_window = SlidingTimeWindow[int](_ALERT_WINDOW_SIZE, 0)
+    stats_window = SlidingTimeWindow[Stats](_STATS_WINDOW_SIZE, Stats())
     alert = Alert(alert_window, alert_threshold)
     queue = asyncio.Queue()
 

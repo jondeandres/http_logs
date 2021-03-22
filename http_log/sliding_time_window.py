@@ -1,29 +1,30 @@
 import typing
 
 from http_log.stats import Stats
+from http_log.lib.queue import Queue
 
 
-class SlidingTimeWindow:
+T = typing.TypeVar('T')
+
+
+class SlidingTimeWindow(typing.Generic[T]):
     def __init__(self, size: int, initial_value: typing.Any = 0) -> None:
         self.__size = size
         self.__value = initial_value
-        self.__refs: typing.List[int] = []
-        self.__values: typing.List[Stats] = []
+        self.__refs: Queue[int] = Queue[int]()
+        self.__values: Queue[T] = Queue[T]()
 
     def add(self, ref: int, value: typing.Any) -> None:
-        self.__refs.append(ref)
-        self.__values.append(value)
-
+        self.__refs.add(ref)
+        self.__values.add(value)
         self.__value += value
+
         self.expire(ref)
 
     def expire(self, ref: float) -> None:
-        if not self.__refs:
-            return
-
-        while self.__refs and self.__refs[0] <= ref - self.__size:
-            self.__refs.pop(0)
-            self.__value -= self.__values.pop(0)
+        while self.__refs and self.__refs.peek() <= ref - self.__size:
+            self.__value -= self.__values.remove()
+            self.__refs.remove()
 
     @property
     def value(self) -> typing.Any:
