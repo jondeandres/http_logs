@@ -73,5 +73,5 @@ async def _alerts(alert: Alert) -> None:
 async def _stats(window: SlidingTimeWindow) -> None:
     while True:
         await asyncio.sleep(10)
-        window.expire(time.time())
+        window.expire(int(time.time()))
         print(sorted(window.value.codes.items(), key=lambda x: -x[1]))

@@ -24,7 +24,7 @@ class Alert:
         self.__firing = value
 
     def run(self) -> None:
-        now = time.time()
+        now = int(time.time())
         self.__window.expire(now)
 
         value = self.__window.value
