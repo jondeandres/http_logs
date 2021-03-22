@@ -2,6 +2,8 @@ import argparse
 import asyncio
 import aiofiles
 import logging
+import signal
+import types
 import time
 
 
@@ -38,12 +40,32 @@ async def main(args: argparse.Namespace):
     alert = Alert(alert_window, args.threshold)
     queue = asyncio.Queue()
 
-    await asyncio.gather(
+    task = asyncio.gather(
         read(queue, args.log_file_path),
         alerts(alert),
         stats(stats_window),
         process(queue, alert_window, stats_window)
     )
+
+    handler = signal_handler_factory(task)
+
+    signal.signal(signal.SIGINT, handler)
+    signal.signal(signal.SIGTERM, handler)
+    signal.signal(signal.SIGQUIT, handler)
+    signal.signal(signal.SIGALRM, handler)
+
+    try:
+        await task
+    except asyncio.CancelledError:
+        pass
+
+
+def signal_handler_factory(task):
+    def signal_handler(*args, **kwargs) -> None:
+        task.cancel()
+
+    return signal_handler
+
 
 async def read(queue, log_file_path):
     async with aiofiles.open(log_file_path, 'r') as f:
