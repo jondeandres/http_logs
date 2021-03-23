@@ -29,8 +29,6 @@ class Alert:
 
     def run(self) -> None:
         now = int(time.time())
-        self.__window.expire(now)
-
         value = self.__window.value
         avg = value / self.__window.size
 

@@ -1,8 +1,13 @@
+import mock
+
 from http_log.sliding_time_window import SlidingTimeWindow
 
 
 class TestSlidingTimeWindow:
-    def test_value(self):
+    @mock.patch('time.time')
+    def test_value(self, time):
+        time.return_value = 0
+
         window = SlidingTimeWindow(5)
         window.add(1, 1)
         window.add(2, 1)
@@ -23,3 +28,13 @@ class TestSlidingTimeWindow:
         window.add(20, 1)
 
         assert window.value == 1
+
+        window.add(1000, 1)
+        window.add(1001, 1)
+        window.add(1002, 1)
+        window.add(1003, 1)
+        window.add(1004, 1)
+
+        time.return_value = 1007
+
+        assert window.value == 2

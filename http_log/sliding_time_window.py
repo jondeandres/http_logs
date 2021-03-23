@@ -1,3 +1,4 @@
+import time
 import typing
 
 from http_log.stats import Stats
@@ -19,17 +20,18 @@ class SlidingTimeWindow(typing.Generic[T]):
         self.__values.add(value)
         self.__value += value
 
-        self.expire(ref)
-
-    def expire(self, ref: float) -> None:
-        while self.__refs and self.__refs.peek() <= ref - self.__size:
-            self.__value -= self.__values.remove()
-            self.__refs.remove()
+        self.__expire(ref)
 
     @property
     def value(self) -> typing.Any:
+        self.__expire(int(time.time()))
         return self.__value
 
     @property
     def size(self) -> int:
         return self.__size
+
+    def __expire(self, ref: int) -> None:
+        while self.__refs and self.__refs.peek() <= ref - self.__size:
+            self.__value -= self.__values.remove()
+            self.__refs.remove()

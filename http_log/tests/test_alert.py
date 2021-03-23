@@ -6,20 +6,6 @@ from http_log.stats import Stats
 
 
 class TestAlert:
-    @mock.patch('time.time')
-    def test_run_expires_window(self, time):
-        time.return_value = 100
-        window = mock.Mock(spec=SlidingTimeWindow)
-        window.value = 5
-        window.size = 5
-        logger = mock.Mock()
-        threshold = 10
-
-        manager = Alert(window, threshold, logger)
-        manager.run()
-
-        window.expire.assert_called_once_with(100)
-
     def test_run_when_no_firing_and_below_threshold(self):
         window = mock.Mock(spec=SlidingTimeWindow)
         window.value = 5

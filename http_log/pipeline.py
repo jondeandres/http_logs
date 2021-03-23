@@ -73,7 +73,4 @@ async def _alerts(alert: Alert) -> None:
 async def _stats(window: SlidingTimeWindow) -> None:
     while True:
         await asyncio.sleep(10)
-
-        window.expire(int(time.time()))
-
         stats.render(window.value)
