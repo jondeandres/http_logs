@@ -1,9 +1,13 @@
+import logging
 import re
 import typing
 
 from http_log.log_entry import LogEntry
 
 _COMMON_LOG_REGEX = re.compile(r'^(\S+) (\S+) (\S+) \[([\w:/]+\s[+\-]\d{4})\] "(\S+) (.+?) (\S+)" (\d{3}) (\S+)')
+
+
+_log = logging.getLogger(__name__)
 
 
 def parse_line(line: str) -> typing.Optional[LogEntry]:
@@ -13,6 +17,8 @@ def parse_line(line: str) -> typing.Optional[LogEntry]:
     match = _COMMON_LOG_REGEX.match(line)
 
     if not match:
+        _log.warning("Couldn't parse line: %s", line)
+
         return None
 
     groups = match.groups()
