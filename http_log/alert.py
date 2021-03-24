@@ -13,7 +13,7 @@ log = logging.getLogger(__name__)
 
 
 class Alert:
-    def __init__(self, window: SlidingTimeWindow, threshold: int, logger: logging.Logger =log):
+    def __init__(self, window: SlidingTimeWindow, threshold: int, logger: logging.Logger = log):
         self.__window = window
         self.__threshold = threshold
         self.__firing = False
