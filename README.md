@@ -37,6 +37,15 @@ Running tests:
 $ pytest http_log/tests/
 ```
 
+### Using Docker
+
+You can use Docker to run the tool:
+
+```
+$ docker build -t http-log:latest .
+$ docker run -it --rm -v PATH_TO_LOG_FILE:/tmp/access.log http-log:latest
+```
+
 ## Design
 
 A diagram of the used design can be found in `design.png`. In next sections I mention some of the main decisions taken for the exercise.
