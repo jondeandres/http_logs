@@ -10,6 +10,12 @@ log = logging.getLogger(__name__)
 
 @dataclass
 class Stats:
+    """
+    This object keeps statistics per status code, section and total requests.
+    It's used by one of the sliding time windows to keep the accumulated statistics.
+
+    Since it implements __add__ and __sub__ it can be used by the time window as an integer
+    """
     codes: typing.Dict[int, int] = field(default_factory=lambda: collections.defaultdict(int))
     sections: typing.Dict[str, int] = field(default_factory=lambda: collections.defaultdict(int))
     total: int = 0
