@@ -1,8 +1,11 @@
-from dataclasses import dataclass, field
 from copy import copy
+from dataclasses import dataclass, field
+import logging
 
 import typing
 import collections
+
+log = logging.getLogger(__name__)
 
 
 @dataclass
@@ -53,7 +56,7 @@ def render(stats: Stats):
             key=lambda x: -x[1]
     )[:5]
 
-    msg = f'Total requests: {stats.total}\n'
+    msg = f'\nTotal requests: {stats.total}\n'
     msg += '\nTop sections:\n'
 
     for section in top_sections:
@@ -66,4 +69,4 @@ def render(stats: Stats):
 
     msg += '\n'
 
-    print(msg)
+    log.info(msg)
